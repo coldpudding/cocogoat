@@ -2,6 +2,7 @@
 import { v4 as uuid } from 'uuid'
 import { ipcRenderer } from 'electron'
 import { RecognizeResult } from 'tesseract.js'
+export { getConfig } from '@/App/ipc'
 interface IactiveWindow {
     os: string
     windowClass: string
@@ -60,6 +61,9 @@ export function close() {
 }
 export function devtools() {
     ipcRenderer.send('devtoolsArtifactView')
+}
+export function createArtifactSwitch() {
+    ipcRenderer.send('createArtifactSwitch')
 }
 export async function sendToAppWindow(channel: string, data: any): Promise<void> {
     const id = uuid()

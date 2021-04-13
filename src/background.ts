@@ -1,12 +1,17 @@
 import path from 'path'
 import fsex from 'fs-extra'
 import { app, protocol } from 'electron'
+import * as Sentry from '@sentry/electron'
 import { interactInit } from './Background/interact'
 import { createWindow } from './Background/windows'
-import { config } from './typings/config'
+import { config, EBuild } from './typings/config'
+import { automateInit } from './Background/automate'
+import { upgradeInit } from './Background/upgrade'
 
 const isDevelopment = process.env.NODE_ENV !== 'production'
-protocol.registerSchemesAsPrivileged([{ scheme: 'app', privileges: { secure: true, standard: true } }])
+protocol.registerSchemesAsPrivileged([
+    { scheme: 'app', privileges: { secure: true, standard: true, supportFetchAPI: true } },
+])
 app.on('window-all-closed', () => {
     app.quit()
 })
@@ -21,12 +26,30 @@ app.on('ready', async () => {
         await fsex.ensureDir(config.configDir)
     }
     try {
-        config.options = await fsex.readJSON(path.join(config.configDir, 'options.json'))
+        config.options = Object.assign(config.options, await fsex.readJSON(path.join(config.configDir, 'options.json')))
     } catch (e) {
         await fsex.writeJSON(path.join(config.configDir, 'options.json'), config.options)
     }
+    try {
+        config.dataDir = path.join(path.dirname(app.getAppPath()), 'data')
+        config.build = await fsex.readJSON(path.join(config.dataDir, 'build.json'))
+    } catch (e) {
+        console.log(e)
+        config.build = { type: EBuild.DEV, timestamp: Date.now() }
+    }
+    config.version = app.getVersion()
+    if (config.options.sendErrorReports && process.env.NODE_ENV !== 'development') {
+        Sentry.init({
+            dsn: process.env.VUE_APP_SENTRY,
+            environment: config.build ? config.build.type : 'DEV',
+            release: config.build && config.build.type === EBuild.REL ? config.version : 'dev',
+        })
+    }
+
     createWindow()
     interactInit()
+    automateInit()
+    upgradeInit()
 })
 if (isDevelopment) {
     if (process.platform === 'win32') {

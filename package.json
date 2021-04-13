@@ -1,8 +1,8 @@
 {
   "name": "cocogoat",
-  "version": "0.2.0",
+  "version": "0.3.1",
   "description": "cocogoat, produces cocomilk.",
-  "author": "The cocogoat team",
+  "author": "月海亭YuehaiTeam",
   "private": true,
   "scripts": {
     "serve": "vue-cli-service serve",
@@ -15,22 +15,28 @@
   },
   "main": "background.js",
   "dependencies": {
-    "bindings": "^1.5.0",
+    "@sentry/electron": "^2.4.0",
+    "@sentry/integrations": "^6.2.5",
     "color-diff": "^1.2.0",
     "context-filter-polyfill": "^0.2.4",
     "core-js": "^3.6.5",
     "dayjs": "^1.10.4",
     "electron-active-window": "^0.0.5",
     "element-plus": "^1.0.2-beta.36",
+    "extendable-error-class": "^0.1.2",
+    "ffi-napi": "^4.0.3",
+    "flyio": "^0.6.14",
     "fs-extra": "^9.1.0",
+    "got": "^11.8.2",
     "iohook": "^0.9.0",
-    "node-addon-api": "^3.1.0",
+    "lodash": "^4.17.21",
+    "marked": "^2.0.2",
     "robotjs": "^0.6.0",
-    "string-similarity": "^4.0.4",
     "tesseract.js": "^2.1.4",
     "uuid": "^8.3.2",
     "vue": "^3.0.0",
-    "vue-router": "^4.0.0-0"
+    "vue-router": "^4.0.0-0",
+    "xss": "^1.0.8"
   },
   "devDependencies": {
     "@typescript-eslint/eslint-plugin": "^4.18.0",
@@ -44,8 +50,7 @@
     "@vue/eslint-config-prettier": "^6.0.0",
     "@vue/eslint-config-typescript": "^7.0.0",
     "babel-eslint": "^10.1.0",
-    "electron": "^9.0.0",
-    "electron-devtools-installer": "^3.1.0",
+    "electron": "^11.0.0",
     "enigmavirtualbox": "^0.9.10",
     "eslint": "^7.23.0",
     "eslint-config-alloy": "^3.10.0",
@@ -60,7 +65,7 @@
   },
   "iohook": {
     "targets": [
-      "electron-80"
+      "electron-85"
     ],
     "platforms": [
       "win32"

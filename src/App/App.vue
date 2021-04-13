@@ -1,6 +1,16 @@
 <script>
+import { bus } from './bus'
 import { ipcRenderer } from 'electron'
+import FirstrunDialog from './Views/FirstrunDialog'
 export default {
+    components: {
+        FirstrunDialog,
+    },
+    computed: {
+        bus() {
+            return bus
+        },
+    },
     created() {
         ipcRenderer.send('ready')
     },
@@ -50,16 +60,21 @@ export default {
 
                 <span class="txt">圣遗物</span>
             </router-link>
-            <router-link :to="{ name: 'Options' }" class="options-btn">
-                <i class="el-icon-s-tools"></i>
-                <span class="txt">设置</span>
-            </router-link>
+            <div class="options-btn">
+                <el-badge is-dot class="item" :hidden="!bus.hasUpgrade" type="danger">
+                    <router-link :to="{ name: 'Options' }">
+                        <i class="el-icon-s-tools"></i>
+                        <span class="txt">设置</span>
+                    </router-link>
+                </el-badge>
+            </div>
         </div>
     </aside>
 
     <main>
         <router-view />
     </main>
+    <firstrun-dialog :show="bus.config.options.firstRun" />
 </template>
 <style lang="scss">
 html,
@@ -82,11 +97,44 @@ body,
 .el-message-box {
     margin-left: 80px;
 }
+.el-dialog {
+    left: 30px;
+}
+.fullscreen-dialog {
+    left: 0;
+}
+.el-loading-mask {
+    z-index: 9998 !important;
+}
+.menubox {
+    width: 30px;
+    height: 30px;
+    -webkit-appearance: none;
+    background: transparent;
+    border: 1px solid transparent;
+    cursor: pointer;
+    box-sizing: border-box;
+    transition: all 0.1s;
+    margin-left: 8px;
+    margin-right: -5px;
+    outline: 0;
+    border-color: #55baff;
+    color: #55baff;
+    border-radius: 2px;
+    &:hover {
+        background-color: #55baff;
+        color: #f7fcff;
+    }
+}
+#app > .el-overlay {
+    z-index: 9998 !important;
+}
 </style>
 <style lang="scss" scoped>
 $main: #007acc;
 $front: rgba(255, 255, 255, 0.75);
 header {
+    user-select: none;
     -webkit-app-region: drag;
     overflow: hidden;
     position: absolute;
@@ -158,6 +206,7 @@ header {
     }
 }
 aside {
+    user-select: none;
     box-shadow: 2px 0 12px 0 rgb(0 0 0 / 10%);
     position: fixed;
     z-index: 9998;
@@ -230,5 +279,8 @@ main {
     bottom: 0;
     left: 10px;
     right: 10px;
+    .el-badge {
+        width: 100%;
+    }
 }
 </style>
